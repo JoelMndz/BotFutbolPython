@@ -10,7 +10,7 @@ class Ventana(tk.Tk):
 
     def configurar_ventana(self):
         # Tamaño
-        self.geometry('690x360')
+        self.geometry('720x480')
         self.resizable(0, 0)
         self.configure(bg='#0489B1')
         self.title('La Liga Bot')
