@@ -1,6 +1,4 @@
 import webbrowser
-
-from controlador.archivo import cargarArchivo
 from modelo.analizadorLexico import AnalizadorLexico
 
 
@@ -9,7 +7,6 @@ class Gestor:
         self.analizador = AnalizadorLexico()
         self.tokens = []
         self.errores = []
-        self.data = cargarArchivo()
 
     def limpiarTokens(self):
         """
