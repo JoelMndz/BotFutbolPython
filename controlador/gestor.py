@@ -1,5 +1,7 @@
 import webbrowser
 
+from MySQLdb._mysql import result
+
 from controlador.consulta import Consulta
 from modelo.analizadorLexico import AnalizadorLexico
 
@@ -86,12 +88,11 @@ class Gestor:
         """
 
         #Guardar los cambios
-        archivo = open('tokens.html','w',encoding='utf-8')
+        archivo = open('temp.html','w',encoding='utf-8')
         archivo.write(html)
         archivo.close()
 
-        webbrowser.open('tokens.html')
-
+        webbrowser.open('temp.html')
 
     def reporteErrores(self):
         """
@@ -143,13 +144,208 @@ class Gestor:
                 """
 
         # Guardar los cambios
-        archivo = open('tokens.html', 'w', encoding='utf-8')
+        archivo = open('temp.html', 'w', encoding='utf-8')
         archivo.write(html)
         archivo.close()
 
-        webbrowser.open('tokens.html')
+        webbrowser.open('temp.html')
 
-    def recibirIntruccion(self, mensaje):
+    def reporteJornada(self,titulo,resultado:list,nombre='jornada'):
+        """
+        Funcion para hacer un reporte
+        """
+        html = f"""
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+            <title>Reporte</title>
+          </head>
+          <body>
+            <nav class="navbar navbar-light bg-light">
+              <div class="conatiner-fluid">
+                <h1 class="mx-2 display-6">{titulo}</h1>
+              </div>
+            </nav>
+            <div class="container">
+
+        """
+        html += """
+                    <table class="table mt-3">
+                    <thead>
+                        <tr>
+                          <th scope="col">Fecha</th>
+                          <th scope="col">Equipo 1</th>
+                          <th scope="col">Equipo 2</th>
+                          <th scope="col">Goles 1</th>
+                          <th scope="col">Goles 2</th>      
+                          <th scope="col">Resultado</th>                    
+                        </tr>
+                      </thead>
+                      <tbody>
+                """
+        if len(resultado) > 0:
+            for i in resultado:
+                html += f"""
+                    <tr>
+                        <td>{i['fecha']}</td>
+                        <td>{i['equipo1']}</td>
+                        <td>{i['equipo2']}</td>
+                        <td>{i['goles1']}</td>
+                        <td>{i['goles2']}</td>
+                        <td>{i['resultado']}</td>
+                    </tr>
+                """
+        else:
+            html += """
+                        <h4>No hay datos</h4>
+                    """
+        html += """
+                    </tbody>
+                    </table>
+                    </body>
+                    </html>
+                """
+
+        # Guardar los cambios
+        archivo = open(f'{nombre}.html', 'w', encoding='utf-8')
+        archivo.write(html)
+        archivo.close()
+
+        webbrowser.open(f'{nombre}.html')
+
+    def reporteTabla(self,titulo,resultado:list,nombre='temporada'):
+        """
+        Funcion para hacer un reporte
+        """
+        html = f"""
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+            <title>Reporte</title>
+          </head>
+          <body>
+            <nav class="navbar navbar-light bg-light">
+              <div class="conatiner-fluid">
+                <h1 class="mx-2 display-6">{titulo}</h1>
+              </div>
+            </nav>
+            <div class="container">
+
+        """
+        html += """
+            <table class="table mt-3">
+            <thead>
+                <tr>
+                  <th scope="col">Equipo</th>
+                  <th scope="col">Puntos</th>                      
+                </tr>
+              </thead>
+              <tbody>
+        """
+        if len(resultado) > 0:
+            for i in resultado:
+                html += f"""
+                    <tr>
+                        <td>{i[0]}</td>
+                        <td>{i[1]}</td>
+                    </tr>
+                """
+        else:
+            html += """
+                <h4>No hay datos</h4>
+            """
+        html += """
+            </tbody>
+            </table>
+            </body>
+            </html>
+        """
+
+        # Guardar los cambios
+        archivo = open(f'{nombre}.html', 'w', encoding='utf-8')
+        archivo.write(html)
+        archivo.close()
+
+        webbrowser.open(f'{nombre}.html')
+
+    def reporteEquipo(self,titulo,resultado:list,nombre='partidos'):
+        """
+        Funcion para hacer un reporte
+        """
+        html = f"""
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+            <title>Reporte</title>
+          </head>
+          <body>
+            <nav class="navbar navbar-light bg-light">
+              <div class="conatiner-fluid">
+                <h1 class="mx-2 display-6">{titulo}</h1>
+              </div>
+            </nav>
+            <div class="container">
+
+        """
+        html += """
+                <table class="table mt-3">
+                <thead>
+                    <tr>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Equipo 1</th>
+                      <th scope="col">Equipo 2</th>
+                      <th scope="col">Goles 1</th>
+                      <th scope="col">Goles 2</th>     
+                      <th scope="col">Jornada</th> 
+                      <th scope="col">Resultado</th>                    
+                    </tr>
+                  </thead>
+                  <tbody>
+            """
+        if len(resultado) > 0:
+            for i in resultado:
+                html += f"""
+                    <tr>
+                        <td>{i['fecha']}</td>
+                        <td>{i['equipo1']}</td>
+                        <td>{i['equipo2']}</td>
+                        <td>{i['goles1']}</td>
+                        <td>{i['goles2']}</td>
+                        <td>{i['jornada']}</td>
+                        <td>{i['resultado']}</td>
+                    </tr>
+                """
+        else:
+            html += """
+                <h4>No hay datos</h4>
+            """
+        html += """
+            </tbody>
+            </table>
+            </body>
+            </html>
+        """
+
+        # Guardar los cambios
+        archivo = open(f'{nombre}.html', 'w', encoding='utf-8')
+        archivo.write(html)
+        archivo.close()
+
+        webbrowser.open(f'{nombre}.html')
+
+    def recibirInstruccion(self, mensaje):
         self.analizador.analizar(mensaje)
         # Pasar los tokens
         for i in self.analizador.tokens:
@@ -164,12 +360,14 @@ class Gestor:
         print(info)
         if info['accion'] == 'RESULTADO':
             resultado = self.consulta.resultadoPartido(info)
-            print(resultado)
         # Si es una jornada
         elif info['accion'] == 'JORNADA':
             resultado = self.consulta.resultadoJornada(info)
-            for i in resultado:
-                print(i)
+            titulo = f'Jornada {info["numero"]} temporada <{info["temporada"][0]}-{info["temporada"][1]}>'
+            if '-f' not in info:
+                self.reporteJornada(titulo, resultado)
+            else:
+                self.reporteJornada(titulo, resultado, info['-f'])
         #Total de goles de una temporada
         elif info['accion'] == 'GOLES':
             resultado = self.consulta.resultadoTotal(info)
@@ -177,11 +375,19 @@ class Gestor:
         #Tabla de posiciones
         elif info['accion'] == 'TABLA':
             resultado = self.consulta.resultadoTablaGeneral(info['temporada'])
-            print(resultado)
+            titulo = f'Temporada <{info["temporada"][0]}-{info["temporada"][1]}>'
+            if '-f' not in info:
+                self.reporteTabla(titulo, resultado)
+            else:
+                self.reporteTabla(titulo, resultado, info['-f'])
         #Temporada de un equipo
         elif info['accion'] == 'PARTIDOS':
             resultado = self.consulta.resultadoTemporadaEquipo(info)
-            print(resultado)
+            titulo = f'Temporada <{info["temporada"][0]}-{info["temporada"][1]}> de {info["equipo"]}'
+            if '-f' not in info:
+                self.reporteEquipo(titulo,resultado)
+            else:
+                self.reporteEquipo(titulo, resultado,info['-f'])
         #Top de equipos
         elif info['accion'] == 'TOP':
             resultado = self.consulta.resultadoTopTemporada(info)
@@ -190,7 +396,5 @@ class Gestor:
             print('ADIOS')
 
 
-
-
 g = Gestor()
-g.recibirIntruccion("ADIOS")
+g.recibirInstruccion(" PARTIDOS “Real Madrid” TEMPORADA <1999-2000> -f ok")

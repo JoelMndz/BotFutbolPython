@@ -27,7 +27,7 @@ class Consulta:
         for i in self.data:
             if (i['jornada'] == filtro['numero'] and
                 i['temporada'] == filtro['temporada']):
-                #Agregar el resultaod final
+                #Agregar el resultado final
                 if i['goles1'] == i['goles2']:
                     i['resultado'] = 'Empate'
                 elif i['goles1'] > i['goles2']:
@@ -93,6 +93,7 @@ class Consulta:
             if i['goles1'] > i['goles2']:
                 indice = equipos.index(i['equipo1'])
                 puntos[indice] += 3
+            #Si gano el equipo 2
             if i['goles2'] > i['goles1']:
                 indice = equipos.index(i['equipo2'])
                 puntos[indice] += 3
@@ -154,6 +155,7 @@ class Consulta:
 
         #Resultados de un equipo
         for i in self.data:
+            valido = False
             if jornadaI != -1 and jornadaF != -1:
                 if (i['temporada'] == filtro['temporada'] and
                     i['jornada'] >= jornadaI and
@@ -161,22 +163,33 @@ class Consulta:
                     (i['equipo2'] == filtro['equipo'] or
                         i['equipo1'] == filtro['equipo'])):
                     partidos.append(i)
+                    valido = True
             elif jornadaI != -1:
                 if (i['temporada'] == filtro['temporada'] and
                     i['jornada'] >= jornadaI and
                     (i['equipo2'] == filtro['equipo'] or
                         i['equipo1'] == filtro['equipo'])):
                     partidos.append(i)
+                    valido = True
             elif jornadaF != -1:
                 if (i['temporada'] == filtro['temporada'] and
                     i['jornada'] <= jornadaF and
                     (i['equipo2'] == filtro['equipo'] or
                         i['equipo1'] == filtro['equipo'])):
                     partidos.append(i)
+                    valido = True
             else:
                 if (i['temporada'] == filtro['temporada'] and
                     (i['equipo2'] == filtro['equipo'] or
                         i['equipo1'] == filtro['equipo'])):
                     partidos.append(i)
+                    valido = True
+            if valido:
+                if i['goles1'] == i['goles2']:
+                    i['resultado'] = 'Empate'
+                elif i['goles1'] > i['goles2']:
+                    i['resultado'] = f'Gano {i["equipo1"]}'
+                else:
+                    i['resultado'] = f'Gano {i["equipo2"]}'
         return partidos
 
