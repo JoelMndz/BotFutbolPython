@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 def cargarArchivo():
     archivo = open('../Recursos/LaLigaBot-LFP.csv',encoding='utf-8')
@@ -20,4 +21,3 @@ def cargarArchivo():
         })
 
     return data
-

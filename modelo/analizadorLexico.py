@@ -154,7 +154,7 @@ class AnalizadorLexico:
                             data[self.tokens[i].lexema] = int(self.tokens[i+1].lexema)
             elif self.tokens[0].lexema == 'TOP':
                 data['accion'] = self.tokens[0].lexema
-                if self.tokens[1].leADIOSxema in ['SUPERIOR','INFERIOR']:
+                if self.tokens[1].lexema in ['SUPERIOR','INFERIOR']:
                     data['condicion'] = self.tokens[1].lexema
                     data['temporada'] = (int(self.tokens[4].lexema), int(self.tokens[6].lexema))
                     if len(self.tokens) == 10:
@@ -164,6 +164,4 @@ class AnalizadorLexico:
                     raise Exception('Formato incorrecto!')
             elif self.tokens[0].lexema == 'ADIOS':
                 data['accion'] = self.tokens[0].lexema
-            #else:
-                #raise Exception('Formato incorrecto!')
         return data

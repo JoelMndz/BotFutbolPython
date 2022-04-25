@@ -1,10 +1,13 @@
 import webbrowser
+
+from controlador.consulta import Consulta
 from modelo.analizadorLexico import AnalizadorLexico
 
 
 class Gestor:
     def __init__(self):
         self.analizador = AnalizadorLexico()
+        self.consulta = Consulta()
         self.tokens = []
         self.errores = []
 
@@ -157,7 +160,37 @@ class Gestor:
 
         #Obtener la informacion
         info = self.analizador.obtenerInformacion()
+        # Si es un partido
+        print(info)
+        if info['accion'] == 'RESULTADO':
+            resultado = self.consulta.resultadoPartido(info)
+            print(resultado)
+        # Si es una jornada
+        elif info['accion'] == 'JORNADA':
+            resultado = self.consulta.resultadoJornada(info)
+            for i in resultado:
+                print(i)
+        #Total de goles de una temporada
+        elif info['accion'] == 'GOLES':
+            resultado = self.consulta.resultadoTotal(info)
+            print(resultado)
+        #Tabla de posiciones
+        elif info['accion'] == 'TABLA':
+            resultado = self.consulta.resultadoTablaGeneral(info['temporada'])
+            print(resultado)
+        #Temporada de un equipo
+        elif info['accion'] == 'PARTIDOS':
+            resultado = self.consulta.resultadoTemporadaEquipo(info)
+            print(resultado)
+        #Top de equipos
+        elif info['accion'] == 'TOP':
+            resultado = self.consulta.resultadoTopTemporada(info)
+            print(resultado)
+        elif info['accion'] == 'ADIOS':
+            print('ADIOS')
+
+
+
 
 g = Gestor()
-g.recibirIntruccion("PARTIDOS “Real Madrid” TEMPORADA <1999-2000> -ji 1 -jf 18")
-g.reporteErrores()
+g.recibirIntruccion("ADIOS")
