@@ -14,7 +14,7 @@ class Consulta:
             if (i['equipo1'].upper() == filtro['equipo1'].upper() and
                 i['equipo2'].upper() == filtro['equipo2'].upper() and
                 i['temporada'] == filtro['temporada']):
-                return {'gole1':i['goles1'], 'goles2':i['goles2']}
+                return {'goles1':i['goles1'], 'goles2':i['goles2']}
         return {}
 
     def resultadoJornada(self, filtro:dict):
@@ -33,7 +33,7 @@ class Consulta:
                 elif i['goles1'] > i['goles2']:
                     i['resultado'] = f'Gano {i["equipo1"]}'
                 else:
-                    i['resultado'] = f'Gano {i["equipo2"]}'
+                    i['resultado'] = f'Ganó {i["equipo2"]}'
                 partidos.append(i)
         return partidos
 
@@ -64,7 +64,9 @@ class Consulta:
         return goles
 
     def resultadoTablaGeneral(self,temporada:tuple):
-
+        """
+        Funcion que devuelve la tabla de posiciones de una temporada
+        """
         # Lista para almacenar los partidos de la temporada
         partidos = []
         # Primero obtenemos los equipos de la serie
@@ -124,6 +126,9 @@ class Consulta:
         return tabla
 
     def resultadoTopTemporada(self,filtro:dict):
+        """
+        Funcion que devulve el top de equipos de una temporada
+        """
         # obtener n ó dejar su valor por defecto
         n = 5
         if '-n' in filtro:
@@ -144,6 +149,9 @@ class Consulta:
 
 
     def resultadoTemporadaEquipo(self, filtro:dict):
+        """
+        Funcion que devuelve los partidos de un equipo
+        """
         partidos = []
         #Obtener la jornada inicial y final
         jornadaI = -1
@@ -188,8 +196,8 @@ class Consulta:
                 if i['goles1'] == i['goles2']:
                     i['resultado'] = 'Empate'
                 elif i['goles1'] > i['goles2']:
-                    i['resultado'] = f'Gano {i["equipo1"]}'
+                    i['resultado'] = f'Ganó {i["equipo1"]}'
                 else:
-                    i['resultado'] = f'Gano {i["equipo2"]}'
+                    i['resultado'] = f'Ganó {i["equipo2"]}'
         return partidos
 

@@ -1,6 +1,8 @@
-import datetime
 from datetime import date
 def cargarArchivo():
+    """
+    Funcion que carga el archivo .csv y devuelve una lista con diccionario de datos
+    """
     archivo = open('../Recursos/LaLigaBot-LFP.csv',encoding='utf-8')
     data = []
     #Leer el encabezado del archivo

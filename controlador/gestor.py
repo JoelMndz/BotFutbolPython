@@ -1,7 +1,4 @@
 import webbrowser
-
-from MySQLdb._mysql import result
-
 from controlador.consulta import Consulta
 from modelo.analizadorLexico import AnalizadorLexico
 
@@ -29,13 +26,13 @@ class Gestor:
         """
         Funcion que abre el manual de usuario en el navegador
         """
-        webbrowser.open('manualUsuario.pdf')
+        webbrowser.open('manual_usuario.pdf')
 
     def abrirManualTecnico(self):
         """
         Funcion que abre el manual tecnico en el navegador
         """
-        webbrowser.open('manualTecnico.pdf')
+        webbrowser.open('manual_tecnico.pdf')
 
 
     def reporteTokens(self):
@@ -61,28 +58,31 @@ class Gestor:
                 <div class="container">
                   
             """
-        html += """
-            <table class="table mt-3">
-            <thead>
-                <tr>
-                  <th scope="col">Lexema</th>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">Linea</th>
-                  <th scope="col">Columna</th>
-                </tr>
-              </thead>
-              <tbody>
-        """
+
         if len(self.tokens) > 0:
+            html += """
+                <table class="table mt-3">
+                <thead>
+                    <tr>
+                      <th scope="col">Lexema</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col">Linea</th>
+                      <th scope="col">Columna</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            """
             for i in self.tokens:
                 html += i.html()
+            html += """
+                </tbody>
+                </table>
+            """
         else:
             html += """
                 <h4>No hay datos</h4>
             """
         html += """
-            </tbody>
-            </table>
             </body>
             </html>
         """
@@ -117,31 +117,34 @@ class Gestor:
             <div class="container">
 
         """
-        html += """
-                    <table class="table mt-3">
-                    <thead>
-                        <tr>
-                          <th scope="col">Descripcion</th>
-                          <th scope="col">Tipo</th>
-                          <th scope="col">Linea</th>
-                          <th scope="col">Columna</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                """
+
         if len(self.errores) > 0:
+            html += """
+                <table class="table mt-3">
+                <thead>
+                    <tr>
+                      <th scope="col">Descripcion</th>
+                      <th scope="col">Tipo</th>
+                      <th scope="col">Linea</th>
+                      <th scope="col">Columna</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            """
             for i in self.errores:
                 html += i.html()
+            html += """
+                </tbody>
+                </table>
+            """
         else:
             html += """
                         <h4>No hay datos</h4>
                     """
         html += """
-                    </tbody>
-                    </table>
-                    </body>
-                    </html>
-                """
+            </body>
+            </html>
+        """
 
         # Guardar los cambios
         archivo = open('temp.html', 'w', encoding='utf-8')
@@ -199,13 +202,15 @@ class Gestor:
                         <td>{i['resultado']}</td>
                     </tr>
                 """
+            html += """
+                </tbody>
+                </table>
+            """
         else:
             html += """
                         <h4>No hay datos</h4>
                     """
         html += """
-                    </tbody>
-                    </table>
                     </body>
                     </html>
                 """
@@ -240,17 +245,18 @@ class Gestor:
             <div class="container">
 
         """
-        html += """
-            <table class="table mt-3">
-            <thead>
-                <tr>
-                  <th scope="col">Equipo</th>
-                  <th scope="col">Puntos</th>                      
-                </tr>
-              </thead>
-              <tbody>
-        """
+
         if len(resultado) > 0:
+            html += """
+                <table class="table mt-3">
+                <thead>
+                    <tr>
+                      <th scope="col">Equipo</th>
+                      <th scope="col">Puntos</th>                      
+                    </tr>
+                  </thead>
+                  <tbody>
+            """
             for i in resultado:
                 html += f"""
                     <tr>
@@ -258,13 +264,15 @@ class Gestor:
                         <td>{i[1]}</td>
                     </tr>
                 """
+            html += """
+                </tbody>
+                </table>
+            """
         else:
             html += """
                 <h4>No hay datos</h4>
             """
         html += """
-            </tbody>
-            </table>
             </body>
             </html>
         """
@@ -299,7 +307,9 @@ class Gestor:
             <div class="container">
 
         """
-        html += """
+
+        if len(resultado) > 0:
+            html += """
                 <table class="table mt-3">
                 <thead>
                     <tr>
@@ -314,7 +324,6 @@ class Gestor:
                   </thead>
                   <tbody>
             """
-        if len(resultado) > 0:
             for i in resultado:
                 html += f"""
                     <tr>
@@ -327,13 +336,15 @@ class Gestor:
                         <td>{i['resultado']}</td>
                     </tr>
                 """
+            html += """
+                </tbody>
+                </table>
+            """
         else:
             html += """
                 <h4>No hay datos</h4>
             """
         html += """
-            </tbody>
-            </table>
             </body>
             </html>
         """
@@ -346,6 +357,7 @@ class Gestor:
         webbrowser.open(f'{nombre}.html')
 
     def recibirInstruccion(self, mensaje):
+        data = {}
         self.analizador.analizar(mensaje)
         # Pasar los tokens
         for i in self.analizador.tokens:
@@ -356,10 +368,16 @@ class Gestor:
 
         #Obtener la informacion
         info = self.analizador.obtenerInformacion()
+        if 'accion' not in info:
+            return {}
         # Si es un partido
-        print(info)
         if info['accion'] == 'RESULTADO':
             resultado = self.consulta.resultadoPartido(info)
+            #Si no hay resultados
+            if len(resultado) == 0:
+                return {}
+            data['respuesta'] = f'El resultado de este partido fue: {info["equipo1"]} {resultado["goles1"]} - {info["equipo2"]} {resultado["goles2"]}'
+
         # Si es una jornada
         elif info['accion'] == 'JORNADA':
             resultado = self.consulta.resultadoJornada(info)
@@ -368,10 +386,13 @@ class Gestor:
                 self.reporteJornada(titulo, resultado)
             else:
                 self.reporteJornada(titulo, resultado, info['-f'])
+            data['respuesta'] = f'Generando archivo de resultados jornada {info["numero"]} temporada {info["temporada"][0]}-{info["temporada"][1]}'
+
         #Total de goles de una temporada
         elif info['accion'] == 'GOLES':
             resultado = self.consulta.resultadoTotal(info)
-            print(resultado)
+            data['respuesta'] = f'Los goles anotados por el {info["equipo"]} en {info["condicion"].lower()} en la temporada {info["temporada"][0]}-{info["temporada"][1]} fueron {resultado}'
+
         #Tabla de posiciones
         elif info['accion'] == 'TABLA':
             resultado = self.consulta.resultadoTablaGeneral(info['temporada'])
@@ -380,21 +401,32 @@ class Gestor:
                 self.reporteTabla(titulo, resultado)
             else:
                 self.reporteTabla(titulo, resultado, info['-f'])
+            data['respuesta'] = f'Generando archivo de clasificación de temporada {info["temporada"][0]}-{info["temporada"][1]}'
+
         #Temporada de un equipo
         elif info['accion'] == 'PARTIDOS':
             resultado = self.consulta.resultadoTemporadaEquipo(info)
+            # Si no hay resultados
+            if len(resultado) == 0:
+                return {}
             titulo = f'Temporada <{info["temporada"][0]}-{info["temporada"][1]}> de {info["equipo"]}'
             if '-f' not in info:
                 self.reporteEquipo(titulo,resultado)
             else:
                 self.reporteEquipo(titulo, resultado,info['-f'])
+            data['respuesta'] = f'Generando archivo de resultados de {info["temporada"][0]}-{info["temporada"][1]} del {info["equipo"]}'
+
         #Top de equipos
         elif info['accion'] == 'TOP':
             resultado = self.consulta.resultadoTopTemporada(info)
-            print(resultado)
+            if len(resultado) == 0:
+                return {}
+            texto = f'El top {info["condicion"].lower()} de la temporada {info["temporada"][0]}-{info["temporada"][1]} fue:'
+            for i in range(len(resultado)):
+                texto += f'\n{i+1}. {resultado[i][0]} ({resultado[i][1]} pts)'
+            data['respuesta'] = texto
+
         elif info['accion'] == 'ADIOS':
-            print('ADIOS')
+            data['respuesta'] = 'ADIOS'
 
-
-g = Gestor()
-g.recibirInstruccion(" PARTIDOS “Real Madrid” TEMPORADA <1999-2000> -f ok")
+        return data
